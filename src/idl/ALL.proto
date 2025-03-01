@@ -1,0 +1,232 @@
+service AuthService {
+    rpc DeliverTokenByRPC(DeliverTokenReq) returns (DeliveryResp) {}
+    rpc VerifyTokenByRPC(VerifyTokenReq) returns (VerifyResp) {}
+}
+
+message DeliverTokenReq {
+    int32  user_id= 1;
+}
+
+message VerifyTokenReq {
+    string token = 1;
+}
+
+message DeliveryResp {
+    string token = 1;
+}
+
+message VerifyResp {
+    bool res = 1;
+}
+service CartService {
+    rpc AddItem(AddItemReq) returns (AddItemResp) {}
+    rpc GetCart(GetCartReq) returns (GetCartResp) {}
+    rpc EmptyCart(EmptyCartReq) returns (EmptyCartResp) {}
+  }
+  
+message CartItem {
+  uint32 product_id = 1;
+  int32  quantity = 2;
+}
+
+message AddItemReq {
+  uint32 user_id = 1;
+  CartItem item = 2;
+}
+
+message AddItemResp {}
+
+message EmptyCartReq {
+  uint32 user_id = 1;
+}
+
+message GetCartReq {
+  uint32 user_id = 1;
+}
+
+message GetCartResp {
+  Cart cart = 1;
+}
+
+message Cart {
+  uint32 user_id = 1;
+  repeated CartItem items = 2;
+}
+
+message EmptyCartResp {}
+
+service CheckoutService {
+  rpc Checkout(CheckoutReq) returns (CheckoutResp) {}
+}
+
+message Address {
+  string street_address = 1;
+  string city = 2;
+  string state = 3;
+  string country = 4;
+  string zip_code = 5;
+}
+
+message CheckoutReq {
+  uint32 user_id = 1;
+  string firstname = 2;
+  string lastname = 3;
+  string email = 4;
+  Address address = 5;
+  payment.CreditCardInfo credit_card = 6;
+}
+
+message CheckoutResp {
+  string order_id = 1;
+  string transaction_id = 2;
+}
+
+service OrderService {
+  rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp) {}
+  rpc ListOrder(ListOrderReq) returns (ListOrderResp) {}
+  rpc MarkOrderPaid(MarkOrderPaidReq) returns (MarkOrderPaidResp) {}
+}
+
+message Address {
+  string street_address = 1;
+  string city = 2;
+  string state = 3;
+  string country = 4;
+  int32 zip_code = 5;
+}
+
+message PlaceOrderReq {
+  uint32 user_id = 1;
+  string user_currency = 2;
+
+  Address address = 3;
+  string email = 4;
+  repeated OrderItem order_items = 5;
+}
+
+message OrderItem {
+  cart.CartItem item = 1;
+  float cost = 2;
+}
+
+message OrderResult {
+  string order_id = 1;
+}
+
+message PlaceOrderResp {
+  OrderResult order = 1;
+}
+
+message ListOrderReq {
+  uint32 user_id = 1;
+}
+
+message Order {
+  repeated OrderItem order_items = 1;
+  string order_id = 2;
+  uint32 user_id = 3;
+  string user_currency = 4;
+  Address address = 5;
+  string email = 6;
+  int32 created_at = 7;
+}
+
+message ListOrderResp {
+  repeated Order orders = 1;
+}
+
+message MarkOrderPaidReq {
+  uint32 user_id = 1;
+  string order_id = 2;
+}
+
+message MarkOrderPaidResp {}
+
+service PaymentService {
+  rpc Charge(ChargeReq) returns (ChargeResp) {}
+}
+
+message CreditCardInfo {
+  string credit_card_number = 1;
+  int32 credit_card_cvv = 2;
+  int32 credit_card_expiration_year = 3;
+  int32 credit_card_expiration_month = 4;
+}
+
+message ChargeReq {
+  float amount = 1;
+  CreditCardInfo credit_card = 2;
+  string order_id = 3;
+  uint32 user_id = 4;
+}
+
+message ChargeResp {
+  string transaction_id = 1;
+}
+
+service ProductCatalogService {
+  rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
+  rpc GetProduct(GetProductReq) returns (GetProductResp) {}
+  rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
+}
+
+message ListProductsReq{
+  int32 page = 1;
+  int64 pageSize = 2;
+
+  string categoryName = 3;
+}
+
+message Product {
+  uint32 id = 1;
+  string name = 2;
+  string description = 3;
+  string picture = 4;
+  float price = 5;
+
+  repeated string categories = 6;
+}
+
+message ListProductsResp {
+  repeated Product products = 1;
+}
+
+message GetProductReq {
+  uint32 id = 1;
+}
+
+message GetProductResp {
+  Product product = 1;
+}
+
+message SearchProductsReq {
+  string query = 1;
+}
+
+message SearchProductsResp {
+  repeated Product results = 1;
+}
+
+service UserService {
+  rpc Register(RegisterReq) returns (RegisterResp) {}
+  rpc Login(LoginReq) returns (LoginResp) {}
+}
+
+message RegisterReq {
+    string email = 1;
+    string password = 2;
+    string confirm_password = 3;
+}
+
+message RegisterResp {
+    int32 user_id = 1;
+}
+
+message LoginReq {
+    string email= 1;
+    string password = 2;
+}
+
+message LoginResp {
+    int32 user_id = 1;
+}
